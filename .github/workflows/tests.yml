@@ -19,6 +19,9 @@ jobs:
       - name: Run tests inside Airflow container
         run: |
           docker compose up -d postgres redis airflow-init airflow-webserver
+          docker compose exec -T postgres psql -U airflow -d airflow < sql/init/01_create_schemas.sql
+          docker compose exec -T postgres psql -U airflow -d airflow < sql/init/02_create_tables.sql
+          docker compose exec -T postgres psql -U airflow -d airflow < sql/init/03_seed_watermarks.sql
           docker compose exec -T --user root airflow-webserver python -m pip install -r requirements-dev.txt
           docker compose exec -T airflow-webserver python -m ruff check dags tests
           docker compose exec -T airflow-webserver python -m pytest -v tests
