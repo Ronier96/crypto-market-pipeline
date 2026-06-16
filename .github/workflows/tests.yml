@@ -19,5 +19,5 @@ jobs:
       - name: Run tests inside Airflow container
         run: |
           docker compose up -d postgres redis airflow-init airflow-webserver
-          docker compose exec -T --user root airflow-webserver python -m pip install pytest
+          docker compose exec -T --user root airflow-webserver python -m pip install -r requirements-dev.txt
           docker compose exec -T airflow-webserver python -m pytest -v tests/test_validate_record.py
