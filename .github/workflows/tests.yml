@@ -1,0 +1,23 @@
+name: Run Unit Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    env:
+      AIRFLOW_UID: 50000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run tests inside Airflow container
+        run: |
+          docker compose up -d postgres redis airflow-init airflow-webserver
+          docker compose exec -T --user root airflow-webserver python -m pip install pytest
+          docker compose exec -T airflow-webserver python -m pytest -v tests/test_validate_record.py
